@@ -1,0 +1,55 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: space-between;
+}
+
+.game_board {
+  height: 700px;
+  width: 350px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+}
+
+.main_grid {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.main_grid div {
+  height: 35px;
+  width: 35px;
+  border: 1px solid grey;
+}
+
+.next_grid {
+  height: 140px;
+  width: 140px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.next_grid div {
+  height: 35px;
+  width: 35px;
+  border: 1px solid grey;
+}
+
+.controls_wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.level_info {
+  display: flex;
+}

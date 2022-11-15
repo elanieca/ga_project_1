@@ -1,0 +1,52 @@
+.i_falling {
+  background-color: #00ffff;
+}
+
+.j_falling {
+  background-color: #ffff00;
+}
+
+.l_falling {
+  background-color: #800080;
+}
+
+.s_falling {
+  background-color: #00ff00;
+}
+
+.z_falling {
+  background-color: #ff0000;
+}
+
+.t_falling {
+  background-color: #0000ff;
+}
+
+.o_falling {
+  background-color: #ff7f00;
+}
+
+.i_dead {
+  background-color: #00ffff;
+}
+
+.j_dead {
+  background-color: #ffff00;
+}
+
+.l_dead {
+  background-color: #800080;
+}
+
+.s_dead {
+  background-color: #00ff00;
+}
+.z_dead {
+  background-color: #ff0000;
+}
+.t_dead {
+  background-color: #0000ff;
+}
+.o_dead {
+  background-color: #ff7f00;
+}
