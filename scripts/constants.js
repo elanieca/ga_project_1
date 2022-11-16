@@ -7,16 +7,17 @@ const MAIN_CELL_COUNT = MAIN_COLS * MAIN_ROWS;
 const NEXT_CELL_COUNT = NEXT_COLS * NEXT_ROWS;
 const MAIN_CELLS = [];
 const NEXT_CELLS = [];
+const INITIAL_ROTATION_CELL = 15;
 
 const TOP_ROW = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+const SHAPES = ["i", "j", "l", "s", "z", "t", "o"];
 
 const DOM_ELEMENTS = {
   mainGrid: document.querySelector(".main_grid"),
   nextGrid: document.querySelector(".next_grid"),
   startButton: document.querySelector("#start"),
 };
-
-const SHAPES = ["i", "j", "l", "s", "z", "t", "o"];
 
 export {
   GAME_TIME,
@@ -25,7 +26,8 @@ export {
   NEXT_CELL_COUNT,
   MAIN_CELLS,
   NEXT_CELLS,
-  SHAPES,
+  INITIAL_ROTATION_CELL,
   TOP_ROW,
+  SHAPES,
   DOM_ELEMENTS,
 };
