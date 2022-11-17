@@ -1,6 +1,7 @@
 import {
   INITIAL_CENTER_CELL,
   MAIN_CELLS,
+  MAIN_WIDTH,
   SHAPES,
   TOP_ROW,
 } from "./constants.js";

@@ -14,7 +14,6 @@ import {
   MAIN_GRID_ROWS,
 } from "./constants.js";
 
-import { createGameBoard } from "./board.js";
 import { generateRandomShape, getRotation } from "./shapes.js";
 
 function init() {
@@ -22,6 +21,22 @@ function init() {
   let currentShape = null;
   let nextShape = null; // haven't implemented it yet
   let shapeIsFalling;
+
+  function createGrid(cellCount, cellArray, grid) {
+    for (let i = 0; i < cellCount; i++) {
+      const cell = document.createElement("div");
+      cell.setAttribute("data-index", i);
+      cellArray.push(cell);
+      // cell.innerHTML = i;
+      grid.appendChild(cell);
+    }
+    return cellArray;
+  }
+
+  function createGameBoard() {
+    createGrid(MAIN_CELL_COUNT, MAIN_CELLS, DOM_ELEMENTS.mainGrid);
+    createGrid(NEXT_CELL_COUNT, NEXT_CELLS, DOM_ELEMENTS.nextGrid);
+  }
 
   createGameBoard();
 
@@ -181,7 +196,11 @@ function init() {
   }
 
   function moveShapeToRight() {
-    if (!currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 9)) {
+    if (
+      !currentShape.currentPosition.some(
+        (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
+      )
+    ) {
       removeShapeAtPosition();
 
       const movedPosition = currentShape.currentPosition.map(
@@ -218,23 +237,19 @@ function init() {
   }
   function moveShapeDown() {
     if (
-      !currentShape.newPosition.some((i) => MAIN_CELLS[i] >= MAIN_CELL_COUNT)
+      !currentShape.newPosition.some((i) =>
+        MAIN_CELLS[i].className.includes("dead")
+      )
     ) {
-      if (
-        !currentShape.newPosition.some((i) =>
-          MAIN_CELLS[i].className.includes("dead")
-        )
-      ) {
-        removeShapeAtPosition();
-        getNewCenterCell();
-        currentShape.currentPosition = currentShape.newPosition;
-        addShapeAtPosition();
-      }
+      removeShapeAtPosition();
+      getNewCenterCell();
+      currentShape.currentPosition = currentShape.newPosition;
+      addShapeAtPosition();
     }
   }
 
   function createArrayOfRows() {
-    for (let rows = 0; rows < MAIN_CELL_COUNT; rows += 10) {
+    for (let rows = 0; rows < MAIN_CELL_COUNT; rows += MAIN_WIDTH) {
       MAIN_GRID_ROWS.push(MAIN_CELLS.slice(rows, rows + MAIN_WIDTH));
     }
     return MAIN_GRID_ROWS;
@@ -260,12 +275,14 @@ function init() {
   }
 
   function handleKeyDown(event) {
+    const x = currentShape.centerCell % MAIN_WIDTH;
+    const y = Math.floor(currentShape.centerCell / MAIN_WIDTH);
     if (
       MAIN_CELLS.some(
         (cell) => cell.className.includes("falling") && isGameRunning
       )
     ) {
-      if (event.key === "ArrowUp") {
+      if (event.key === "ArrowUp" && x < MAIN_WIDTH - 1 && x > 0) {
         rotateShape();
       }
       if (event.key === "ArrowDown") {
