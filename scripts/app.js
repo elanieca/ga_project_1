@@ -26,16 +26,22 @@ function init() {
       this.topRow = TOP_ROW; // if filled with div of class dead -> game over
       this.renderPosition = renderPosition;
       this.currentPosition = renderPosition;
-      this.rotationCell = 15;
+      this.centerCell = Math.floor(MAIN_CELLS / 2) + MAIN_CELLS * 2; // throws back shape to center if moved in first line
       this.currentRotation = 0;
       this.possibleRotations = possibleRotations;
       this.newPosition = [];
       this.falling = `${shape}_falling`;
       this.dead = `${shape}_dead`;
     }
-    incrementRotation = function () {
+    incrementRotation() {
       this.currentRotation++;
-    };
+    }
+    incrementCenterCell() {
+      this.centerCell++;
+    }
+    decreaseCenterCell() {
+      this.centerCell--;
+    }
   }
 
   function generateRandomShape() {
@@ -103,12 +109,17 @@ function init() {
 
   function move() {
     moveShapeToNewPosition();
-    getNewRotationCell();
+    // getNewCenterCell();
   }
 
   function moveShapeToNewPosition() {
+    getNewCenterCell();
     removeShapeAtPosition();
-    currentShape.currentPosition = getNewPosition();
+    currentShape.currentPosition = getRotation(
+      currentShape.centerCell,
+      currentShape.shape,
+      currentShape.currentRotation
+    );
     addShapeAtPosition();
   }
 
@@ -171,11 +182,11 @@ function init() {
     });
   }
 
-  function getNewRotationCell() {
-    if (currentShape.rotationCell < MAIN_CELL_COUNT - MAIN_WIDTH * 2) {
-      currentShape.rotationCell += MAIN_WIDTH;
+  function getNewCenterCell() {
+    if (currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH * 2) {
+      currentShape.centerCell += MAIN_WIDTH;
     } else {
-      currentShape.rotationCell = INITIAL_ROTATION_CELL;
+      currentShape.centerCell = INITIAL_ROTATION_CELL;
     }
   }
 
@@ -194,7 +205,7 @@ function init() {
 
     const currentPosition = currentShape.currentPosition;
     const rotatedShape = getRotation(
-      currentShape.rotationCell,
+      85,
       currentShape.shape,
       currentShape.currentRotation
     );
@@ -216,20 +227,43 @@ function init() {
     addShapeAtPosition();
   }
 
+  function moveShapeToRight() {
+    removeShapeAtPosition();
+    const movedPosition = currentShape.currentPosition.map((cell) => cell + 1);
+    currentShape.currentPosition = movedPosition;
+    currentShape.incrementCenterCell();
+    addShapeAtPosition();
+  }
+
+  function moveShapeToLeft() {
+    removeShapeAtPosition();
+    const movedPosition = currentShape.currentPosition.map((cell) => cell - 1);
+    currentShape.currentPosition = movedPosition;
+    currentShape.decreaseCenterCell();
+    addShapeAtPosition();
+  }
+
   function handleKeyDown(event) {
     if (
       MAIN_CELLS.some(
-        (cell) => cell.className.includes("falling") && isGameRunning
+        (cell) => cell.className.includes("falling") /* && isGameRunning */
       )
     ) {
       if (event.key === "ArrowUp") {
         rotateShape();
-      } else if (event.key === "ArrowRight") {
+      }
+      if (event.key === "ArrowRight") {
         moveShapeToRight();
+      }
+      if (event.key === "ArrowLeft") {
+        moveShapeToLeft();
       }
     }
   }
 
+  //  } else if (event.key === "ArrowDown" && y < cellWidth - 1) {
+  //     moveDown();
+  //   } else if (event.key === "ArrowUp" && y > 0) {
   // function getRotation(center, shape, currentRotation) {
   //   const rotations = {
   //     // the stick
