@@ -7,9 +7,11 @@ const MAIN_CELL_COUNT = MAIN_WIDTH * MAIN_HEIGHT;
 const NEXT_CELL_COUNT = NEXT_WIDTH * NEXT_HEIGHT;
 const MAIN_CELLS = [];
 const NEXT_CELLS = [];
-const INITIAL_ROTATION_CELL = 15;
+const MAIN_GRID_ROWS = [];
+const INITIAL_CENTER_CELL = 5;
 
 const TOP_ROW = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+const BOTTOM_ROW = TOP_ROW.map((cell) => cell + 190);
 
 const SHAPES = ["i", "j", "l", "s", "z", "t", "o"];
 
@@ -22,12 +24,15 @@ const DOM_ELEMENTS = {
 export {
   GAME_TIME,
   MAIN_WIDTH,
+  MAIN_HEIGHT,
   MAIN_CELL_COUNT,
   NEXT_CELL_COUNT,
   MAIN_CELLS,
   NEXT_CELLS,
-  INITIAL_ROTATION_CELL,
+  MAIN_GRID_ROWS,
+  INITIAL_CENTER_CELL,
   TOP_ROW,
+  BOTTOM_ROW,
   SHAPES,
   DOM_ELEMENTS,
 };

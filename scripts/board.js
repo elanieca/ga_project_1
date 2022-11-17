@@ -14,6 +14,7 @@ function createGrid(cellCount, cellArray, grid) {
     cell.innerHTML = i;
     grid.appendChild(cell);
   }
+  return cellArray;
 }
 
 function createGameBoard(cellCount, cellArray, grid) {

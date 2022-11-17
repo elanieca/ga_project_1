@@ -1,115 +1,61 @@
 import {
   DOM_ELEMENTS,
   MAIN_WIDTH,
+  MAIN_HEIGHT,
   MAIN_CELL_COUNT,
   NEXT_CELL_COUNT,
   MAIN_CELLS,
   NEXT_CELLS,
   GAME_TIME,
-  INITIAL_ROTATION_CELL,
+  INITIAL_CENTER_CELL,
   TOP_ROW,
+  BOTTOM_ROW,
   SHAPES,
+  MAIN_GRID_ROWS,
 } from "./constants.js";
 
 import { createGameBoard } from "./board.js";
-import { getRotation } from "./rotations.js";
+import { generateRandomShape, getRotation } from "./shapes.js";
 
 function init() {
   let isGameRunning = false;
   let currentShape = null;
-  let nextShape = null;
-  let shapeFall;
-
-  class Shape {
-    constructor(renderPosition, possibleRotations, shape) {
-      this.shape = shape;
-      this.topRow = TOP_ROW; // if filled with div of class dead -> game over
-      this.renderPosition = renderPosition;
-      this.currentPosition = renderPosition;
-      this.centerCell = Math.floor(MAIN_CELLS / 2) + MAIN_CELLS * 2; // throws back shape to center if moved in first line
-      this.currentRotation = 0;
-      this.possibleRotations = possibleRotations;
-      this.newPosition = [];
-      this.falling = `${shape}_falling`;
-      this.dead = `${shape}_dead`;
-    }
-    incrementRotation() {
-      this.currentRotation++;
-    }
-    incrementCenterCell() {
-      this.centerCell++;
-    }
-    decreaseCenterCell() {
-      this.centerCell--;
-    }
-  }
-
-  function generateRandomShape() {
-    switch (getRandomShapeIndex()) {
-      case 0:
-        return new Shape([3, 4, 5, 6], 2, "i");
-      case 1:
-        return new Shape([4, 5, 6, 16], 4, "j");
-      case 2:
-        return new Shape([4, 5, 6, 14], 4, "l");
-      case 3:
-        return new Shape([5, 6, 14, 15], 2, "s");
-      case 4:
-        return new Shape([4, 5, 15, 16], 2, "z");
-      case 5:
-        return new Shape([4, 5, 6, 15], 4, "t");
-      case 6:
-        return new Shape([4, 5, 14, 15], 1, "o");
-    }
-  }
-
-  function getRandomShapeIndex() {
-    const randomShapeIndex = Math.floor(Math.random() * SHAPES.length);
-    return randomShapeIndex;
-  }
+  let nextShape = null; // haven't implemented it yet
+  let shapeIsFalling;
 
   createGameBoard();
 
-  function letShapeFall() {
+  function playAGame() {
     if (MAIN_CELLS.some((cell) => cell.className.includes("falling"))) {
-      shapeFall = setInterval(() => {
+      shapeIsFalling = setInterval(() => {
         if (
-          currentShape.newPosition.some((i) => i >= MAIN_CELL_COUNT) ||
-          currentShape.newPosition.some((cell) =>
-            MAIN_CELLS[cell].className.includes("dead")
+          BOTTOM_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) ||
+          currentShape.newPosition.some((i) =>
+            MAIN_CELLS[i].className.includes("dead")
           )
         ) {
           deactivateCurrentShape();
-          if (
-            currentShape.topRow.some((i) =>
-              MAIN_CELLS[i].className.includes("dead")
-            )
-          ) {
+          checkIfLineClear();
+          if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
             setTimeout(endGame, 200);
-            DOM_ELEMENTS.startButton.textContent = "START";
           } else {
-            letShapeFall();
+            playAGame();
           }
         } else {
-          move();
+          moveShapeToNewPosition();
         }
       }, GAME_TIME);
     } else {
       renderRandomShape();
-      letShapeFall();
+      playAGame();
     }
   }
 
   function renderRandomShape() {
-    nextShape === null
+    nextShape === null // for the next piece preview but haven't implemented it yet
       ? (currentShape = generateRandomShape())
       : (currentShape = nextShape);
     addShapeAtPosition();
-  }
-
-  function move() {
-    moveShapeToNewPosition();
-    // getNewCenterCell();
   }
 
   function moveShapeToNewPosition() {
@@ -129,7 +75,7 @@ function init() {
   }
 
   function deactivateCurrentShape() {
-    clearInterval(shapeFall);
+    clearInterval(shapeIsFalling);
     removeShapeAtPosition();
     setCurrentShapeToDead();
   }
@@ -140,15 +86,15 @@ function init() {
     );
   }
 
-  function setCurrentShapeToFalling() {
-    currentShape.currentPosition.forEach((cell) =>
-      MAIN_CELLS[cell].classList.add(currentShape.falling)
-    );
-  }
-
   function setCurrentShapeToDead() {
     currentShape.currentPosition.forEach((cell) =>
       MAIN_CELLS[cell].classList.add(currentShape.dead)
+    );
+  }
+
+  function setCurrentShapeToFalling() {
+    currentShape.currentPosition.forEach((cell) =>
+      MAIN_CELLS[cell].classList.add(currentShape.falling)
     );
   }
 
@@ -166,34 +112,37 @@ function init() {
   function startGame() {
     isGameRunning = true;
     DOM_ELEMENTS.startButton.textContent = "PAUSE";
-    letShapeFall();
+    playAGame();
   }
   function pauseGame() {
     isGameRunning = false;
     DOM_ELEMENTS.startButton.textContent = "RESUME";
-    clearInterval(shapeFall);
+    clearInterval(shapeIsFalling);
   }
 
   function endGame() {
     isGameRunning = false;
-    clearInterval(shapeFall);
+    clearInterval(shapeIsFalling);
     MAIN_CELLS.forEach((cell) => {
       cell.removeAttribute("class");
     });
+    DOM_ELEMENTS.startButton.textContent = "START";
   }
 
   function getNewCenterCell() {
-    if (currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH * 2) {
+    if (
+      currentShape.shape === "i" &&
+      currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH
+    ) {
       currentShape.centerCell += MAIN_WIDTH;
-    } else {
-      currentShape.centerCell = INITIAL_ROTATION_CELL;
+    } else if (currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH * 2) {
+      currentShape.centerCell += MAIN_WIDTH;
     }
   }
 
-  function rotateShape() {
-    removeShapeAtPosition();
+  function setCurrentRotation() {
     if (
-      currentShape.currentPosition !== currentShape.renderPosition &&
+      !TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) &&
       currentShape.shape !== "o"
     ) {
       currentShape.incrementRotation();
@@ -202,55 +151,125 @@ function init() {
     if (currentShape.currentRotation >= currentShape.possibleRotations) {
       currentShape.currentRotation = 0;
     }
+  }
 
-    const currentPosition = currentShape.currentPosition;
-    const rotatedShape = getRotation(
-      85,
-      currentShape.shape,
-      currentShape.currentRotation
-    );
+  function rotateShape() {
+    if (!TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling"))) {
+      removeShapeAtPosition();
+      setCurrentRotation();
 
-    if (
-      currentShape.currentPosition !== currentShape.renderPosition &&
-      currentShape.shape !== "o"
-    ) {
-      currentShape.currentPosition = rotatedShape;
+      const currentPosition = currentShape.currentPosition;
+      const rotatedShape = getRotation(
+        currentShape.centerCell,
+        currentShape.shape,
+        currentShape.currentRotation
+      );
+
+      if (currentShape.shape !== "o") {
+        currentShape.currentPosition = rotatedShape;
+      }
+
+      if (
+        currentShape.currentPosition.some((i) =>
+          MAIN_CELLS[i].className.includes("dead")
+        )
+      ) {
+        currentShape.currentPosition = currentPosition;
+      }
+      addShapeAtPosition();
     }
-
-    if (
-      currentShape.currentPosition.some((i) =>
-        MAIN_CELLS[i].className.includes("dead")
-      )
-    ) {
-      currentShape.currentPosition = currentPosition;
-    }
-    addShapeAtPosition();
   }
 
   function moveShapeToRight() {
-    removeShapeAtPosition();
-    const movedPosition = currentShape.currentPosition.map((cell) => cell + 1);
-    currentShape.currentPosition = movedPosition;
-    currentShape.incrementCenterCell();
-    addShapeAtPosition();
+    if (!currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 9)) {
+      removeShapeAtPosition();
+
+      const movedPosition = currentShape.currentPosition.map(
+        (cell) => cell + 1
+      );
+
+      if (
+        !movedPosition.some((i) => MAIN_CELLS[i].className.includes("dead"))
+      ) {
+        currentShape.currentPosition = movedPosition;
+        currentShape.incrementCenterCell();
+      }
+
+      addShapeAtPosition();
+    }
   }
 
   function moveShapeToLeft() {
-    removeShapeAtPosition();
-    const movedPosition = currentShape.currentPosition.map((cell) => cell - 1);
-    currentShape.currentPosition = movedPosition;
-    currentShape.decreaseCenterCell();
-    addShapeAtPosition();
+    if (!currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 0)) {
+      removeShapeAtPosition();
+
+      const movedPosition = currentShape.currentPosition.map(
+        (cell) => cell - 1
+      );
+
+      if (
+        !movedPosition.some((i) => MAIN_CELLS[i].className.includes("dead"))
+      ) {
+        currentShape.currentPosition = movedPosition;
+        currentShape.decreaseCenterCell();
+      }
+      addShapeAtPosition();
+    }
+  }
+  function moveShapeDown() {
+    if (
+      !currentShape.newPosition.some((i) => MAIN_CELLS[i] >= MAIN_CELL_COUNT)
+    ) {
+      if (
+        !currentShape.newPosition.some((i) =>
+          MAIN_CELLS[i].className.includes("dead")
+        )
+      ) {
+        removeShapeAtPosition();
+        getNewCenterCell();
+        currentShape.currentPosition = currentShape.newPosition;
+        addShapeAtPosition();
+      }
+    }
+  }
+
+  function createArrayOfRows() {
+    for (let rows = 0; rows < MAIN_CELL_COUNT; rows += 10) {
+      MAIN_GRID_ROWS.push(MAIN_CELLS.slice(rows, rows + MAIN_WIDTH));
+    }
+    return MAIN_GRID_ROWS;
+  }
+
+  function checkIfLineClear() {
+    createArrayOfRows();
+
+    for (let row = MAIN_HEIGHT - 1; row > 0; row--) {
+      while (
+        MAIN_GRID_ROWS[row].every((cell) => cell.className.includes("dead"))
+      ) {
+        let currentRow = row;
+        while (currentRow > 0) {
+          for (let cell = 0; cell < MAIN_WIDTH; cell++) {
+            MAIN_GRID_ROWS[currentRow][cell].className =
+              MAIN_GRID_ROWS[currentRow - 1][cell].className;
+          }
+          currentRow -= 1;
+        }
+      }
+    }
   }
 
   function handleKeyDown(event) {
     if (
       MAIN_CELLS.some(
-        (cell) => cell.className.includes("falling") /* && isGameRunning */
+        (cell) => cell.className.includes("falling") && isGameRunning
       )
     ) {
       if (event.key === "ArrowUp") {
         rotateShape();
+      }
+      if (event.key === "ArrowDown") {
+        moveShapeDown(); // still gives me an error in console but not game breaking
       }
       if (event.key === "ArrowRight") {
         moveShapeToRight();
@@ -260,70 +279,6 @@ function init() {
       }
     }
   }
-
-  //  } else if (event.key === "ArrowDown" && y < cellWidth - 1) {
-  //     moveDown();
-  //   } else if (event.key === "ArrowUp" && y > 0) {
-  // function getRotation(center, shape, currentRotation) {
-  //   const rotations = {
-  //     // the stick
-  //     i: {
-  //       rotation: [
-  //         [center - 2, center - 1, center, center + 1],
-  //         [center - 10, center, center + 10, center + 20],
-  //       ],
-  //     },
-
-  //     // the J shape
-  //     j: {
-  //       rotation: [
-  //         [center - 1, center, center + 1, center + 11],
-  //         [center - 10, center, center + 9, center + 10],
-  //         [center - 11, center - 1, center, center + 1],
-  //         [center - 10, center - 9, center, center + 10],
-  //       ],
-  //     },
-  //     // the L shape
-  //     l: {
-  //       rotation: [
-  //         [center - 1, center, center + 1, center + 9],
-  //         [center - 11, center - 10, center, center + 10],
-  //         [center - 9, center - 1, center, center + 1],
-  //         [center - 10, center, center + 10, center + 11],
-  //       ],
-  //     },
-  //     // the s shape
-  //     s: {
-  //       rotation: [
-  //         [center, center + 1, center + 9, center + 10],
-  //         [center - 10, center, center + 1, center + 11],
-  //       ],
-  //     },
-
-  //     // the z shape
-  //     z: {
-  //       rotation: [
-  //         [center - 1, center, center + 10, center + 11],
-  //         [center - 9, center, center + 1, center + 10],
-  //       ],
-  //     },
-
-  //     // the t shape
-  //     t: {
-  //       rotation: [
-  //         [center - 1, center, center + 1, center + 10],
-  //         [center - 10, center - 1, center, center + 10],
-  //         [center - 10, center - 1, center, center + 1],
-  //         [center - 10, center, center + 1, center + 10],
-  //       ],
-  //     },
-
-  //     o: {
-  //       rotation: [[center - 1, center, center + 9, center + 10]],
-  //     },
-  //   };
-  //   return rotations[shape].rotation[currentRotation];
-  // }
 
   window.addEventListener("keydown", handleKeyDown);
 
