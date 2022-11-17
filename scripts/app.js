@@ -19,7 +19,7 @@ import { generateRandomShape, getRotation } from "./shapes.js";
 function init() {
   let isGameRunning = false;
   let currentShape = null;
-  let nextShape = null; // haven't implemented it yet
+  let nextShape = null;
   let shapeIsFalling;
 
   function createGrid(cellCount, cellArray, grid) {
@@ -27,7 +27,6 @@ function init() {
       const cell = document.createElement("div");
       cell.setAttribute("data-index", i);
       cellArray.push(cell);
-      // cell.innerHTML = i;
       grid.appendChild(cell);
     }
     return cellArray;
@@ -40,7 +39,7 @@ function init() {
 
   createGameBoard();
 
-  function playAGame() {
+  function playGame() {
     if (MAIN_CELLS.some((cell) => cell.className.includes("falling"))) {
       shapeIsFalling = setInterval(() => {
         if (
@@ -54,7 +53,8 @@ function init() {
           if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
             setTimeout(endGame, 200);
           } else {
-            playAGame();
+            removePreviewShape();
+            playGame();
           }
         } else {
           moveShapeToNewPosition();
@@ -62,14 +62,16 @@ function init() {
       }, GAME_TIME);
     } else {
       renderRandomShape();
-      playAGame();
+      addPreviewShape();
+      playGame();
     }
   }
 
   function renderRandomShape() {
-    nextShape === null // for the next piece preview but haven't implemented it yet
+    nextShape === null
       ? (currentShape = generateRandomShape())
       : (currentShape = nextShape);
+    nextShape = generateRandomShape();
     addShapeAtPosition();
   }
 
@@ -120,6 +122,17 @@ function init() {
     return currentShape.newPosition;
   }
 
+  function removePreviewShape() {
+    nextShape.previewPosition.forEach((cell) =>
+      NEXT_CELLS[cell].classList.remove(nextShape.falling)
+    );
+  }
+  function addPreviewShape() {
+    nextShape.previewPosition.forEach((cell) =>
+      NEXT_CELLS[cell].classList.add(nextShape.falling)
+    );
+  }
+
   function startPauseToggle() {
     !isGameRunning ? startGame() : pauseGame();
   }
@@ -127,7 +140,7 @@ function init() {
   function startGame() {
     isGameRunning = true;
     DOM_ELEMENTS.startButton.textContent = "PAUSE";
-    playAGame();
+    playGame();
   }
   function pauseGame() {
     isGameRunning = false;
@@ -141,16 +154,12 @@ function init() {
     MAIN_CELLS.forEach((cell) => {
       cell.removeAttribute("class");
     });
+    removePreviewShape();
     DOM_ELEMENTS.startButton.textContent = "START";
   }
 
   function getNewCenterCell() {
-    if (
-      currentShape.shape === "i" &&
-      currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH
-    ) {
-      currentShape.centerCell += MAIN_WIDTH;
-    } else if (currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH * 2) {
+    if (currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH) {
       currentShape.centerCell += MAIN_WIDTH;
     }
   }
@@ -276,16 +285,17 @@ function init() {
 
   function handleKeyDown(event) {
     const x = currentShape.centerCell % MAIN_WIDTH;
-    const y = Math.floor(currentShape.centerCell / MAIN_WIDTH);
+    const y = Math.floor(currentShape.centerCell / MAIN_HEIGHT);
+
     if (
       MAIN_CELLS.some(
         (cell) => cell.className.includes("falling") && isGameRunning
       )
     ) {
-      if (event.key === "ArrowUp" && x < MAIN_WIDTH - 1 && x > 0) {
+      if (event.key === "ArrowUp" && x > 0 && x < MAIN_WIDTH - 1) {
         rotateShape();
       }
-      if (event.key === "ArrowDown") {
+      if (event.key === "ArrowDown" && y < MAIN_WIDTH - 1) {
         moveShapeDown(); // still gives me an error in console but not game breaking
       }
       if (event.key === "ArrowRight") {
@@ -299,6 +309,7 @@ function init() {
 
   window.addEventListener("keydown", handleKeyDown);
 
+  DOM_ELEMENTS.resetButton.addEventListener("click", endGame);
   DOM_ELEMENTS.startButton.addEventListener("click", startPauseToggle);
 }
 

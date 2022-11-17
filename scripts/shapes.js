@@ -7,10 +7,11 @@ import {
 } from "./constants.js";
 
 class Shape {
-  constructor(renderPosition, possibleRotations, shape) {
+  constructor(renderPosition, previewPosition, possibleRotations, shape) {
     this.shape = shape;
     this.renderPosition = renderPosition;
     this.currentPosition = renderPosition;
+    this.previewPosition = previewPosition;
     this.centerCell = INITIAL_CENTER_CELL;
     this.currentRotation = 0;
     this.possibleRotations = possibleRotations;
@@ -32,19 +33,19 @@ class Shape {
 function generateRandomShape() {
   switch (getRandomShapeIndex()) {
     case 0:
-      return new Shape([3, 4, 5, 6], 2, "i");
+      return new Shape([3, 4, 5, 6], [7, 8, 9, 10], 2, "i");
     case 1:
-      return new Shape([4, 5, 6, 16], 4, "j");
+      return new Shape([4, 5, 6, 16], [8, 9, 10, 16], 4, "j");
     case 2:
-      return new Shape([4, 5, 6, 14], 4, "l");
+      return new Shape([4, 5, 6, 14], [8, 9, 10, 14], 4, "l");
     case 3:
-      return new Shape([5, 6, 14, 15], 2, "s");
+      return new Shape([5, 6, 14, 15], [9, 10, 14, 15], 2, "s");
     case 4:
-      return new Shape([4, 5, 15, 16], 2, "z");
+      return new Shape([4, 5, 15, 16], [8, 9, 15, 16], 2, "z");
     case 5:
-      return new Shape([4, 5, 6, 15], 4, "t");
+      return new Shape([4, 5, 6, 15], [8, 9, 10, 15], 4, "t");
     case 6:
-      return new Shape([4, 5, 14, 15], 1, "o");
+      return new Shape([4, 5, 14, 15], [8, 9, 14, 15], 1, "o");
   }
 }
 function getRandomShapeIndex() {

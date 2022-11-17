@@ -1,7 +1,7 @@
 const GAME_TIME = 1000;
 const MAIN_WIDTH = 10;
 const MAIN_HEIGHT = 20;
-const NEXT_WIDTH = 4;
+const NEXT_WIDTH = 6;
 const NEXT_HEIGHT = 4;
 const MAIN_CELL_COUNT = MAIN_WIDTH * MAIN_HEIGHT;
 const NEXT_CELL_COUNT = NEXT_WIDTH * NEXT_HEIGHT;
@@ -19,6 +19,7 @@ const DOM_ELEMENTS = {
   mainGrid: document.querySelector(".main_grid"),
   nextGrid: document.querySelector(".next_grid"),
   startButton: document.querySelector("#start"),
+  resetButton: document.querySelector("#reset"),
 };
 
 export {
