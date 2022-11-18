@@ -20,6 +20,7 @@ const DOM_ELEMENTS = {
   nextGrid: document.querySelector(".next_grid"),
   startButton: document.querySelector("#start"),
   resetButton: document.querySelector("#reset"),
+  gameOverScreen: document.querySelector("#game_over"),
 };
 
 export {

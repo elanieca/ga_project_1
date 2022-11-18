@@ -12,9 +12,10 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap"
       rel="stylesheet"
     />
+
     <link rel="stylesheet" href="./styles/main.css" />
     <link rel="stylesheet" href="./styles/shapes.css" />
     <script type="module" src="./scripts/app.js"></script>
@@ -22,21 +23,40 @@
     <script type="module" src="./scripts/constants.js"></script>
   </head>
   <body>
+    <img src="./images/game_over.png" alt="game over screen" id="game_over" />
+
     <h1 class="tetris_logo">- TETRIS -</h1>
+
     <section class="main_area">
-      <div class="controls_wrapper">
-        <!-- <img src="/images/play_button.png" alt="" id="start" /> -->
-        <button id="start">START</button>
-        <button id="reset">RESET</button>
+      <div class="left_aside">
+        <div class="controls_wrapper">
+          <button id="start">START</button>
+          <button id="reset">RESET</button>
+        </div>
+        <div class="instructions">
+          <p>CONTROLS</p>
+          <div class="controls">
+            <p>rotate</p>
+            <div>
+              <p>left</p>
+              <img
+                src="./images/arrow_keys.png"
+                alt="controls information"
+                id="arrow_keys"
+              />
+              <p>right</p>
+            </div>
+            <p>soft drop</p>
+          </div>
+        </div>
       </div>
+
       <div class="game_board">
         <div class="main_grid"></div>
       </div>
-      <div class="game_info">
-        <!-- * still want to implement score and timer -->
-        <!-- <div id="timer">time:</div> -->
-        <!-- <div id="score">score:</div> -->
 
+      <div class="right_aside">
+        <!-- * still want to implement score and timer -->
         <div class="next_piece">
           <p>NEXT PIECE:</p>
           <div class="next_grid"></div>

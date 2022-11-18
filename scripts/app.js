@@ -51,7 +51,7 @@ function init() {
           deactivateCurrentShape();
           checkIfLineClear();
           if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
-            setTimeout(endGame, 200);
+            setTimeout(endGame, 100);
           } else {
             removePreviewShape();
             playGame();
@@ -148,7 +148,7 @@ function init() {
     clearInterval(shapeIsFalling);
   }
 
-  function endGame() {
+  function resetGame() {
     isGameRunning = false;
     clearInterval(shapeIsFalling);
     MAIN_CELLS.forEach((cell) => {
@@ -156,6 +156,15 @@ function init() {
     });
     removePreviewShape();
     DOM_ELEMENTS.startButton.textContent = "START";
+  }
+
+  function endGame() {
+    DOM_ELEMENTS.gameOverScreen.style.visibility = "visible";
+    resetGame();
+  }
+
+  function playAgain() {
+    DOM_ELEMENTS.gameOverScreen.style.visibility = "hidden";
   }
 
   function getNewCenterCell() {
@@ -309,8 +318,9 @@ function init() {
 
   window.addEventListener("keydown", handleKeyDown);
 
-  DOM_ELEMENTS.resetButton.addEventListener("click", endGame);
+  DOM_ELEMENTS.resetButton.addEventListener("click", resetGame);
   DOM_ELEMENTS.startButton.addEventListener("click", startPauseToggle);
+  DOM_ELEMENTS.gameOverScreen.addEventListener("click", playAgain);
 }
 
 window.addEventListener("DOMContentLoaded", init);
