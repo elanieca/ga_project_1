@@ -97,11 +97,7 @@ function init() {
   }
 
   function isFalling() {
-    if (MAIN_CELLS.some((cell) => cell.className.includes("falling"))) {
-      return true;
-    } else {
-      return false;
-    }
+    return MAIN_CELLS.some((cell) => cell.className.includes("falling"));
   }
 
   function isColliding() {
@@ -118,11 +114,7 @@ function init() {
   }
 
   function isFillingTopOfGrid() {
-    if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
-      return true;
-    } else {
-      return false;
-    }
+    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"));
   }
 
   function handleKeyDown(event) {
@@ -179,23 +171,13 @@ function init() {
   }
 
   function isTopRow() {
-    if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling"))) {
-      return true;
-    } else {
-      return false;
-    }
+    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling"));
   }
 
   function isRotatingIntoDeadShape() {
-    if (
-      currentShape.currentPosition.some((i) =>
-        MAIN_CELLS[i].className.includes("dead")
-      )
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return currentShape.currentPosition.some((i) =>
+      MAIN_CELLS[i].className.includes("dead")
+    );
   }
 
   function moveShapeToRight() {
@@ -235,23 +217,13 @@ function init() {
   }
 
   function isMovingOffRight() {
-    if (
-      currentShape.currentPosition.some(
-        (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
-      )
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    return currentShape.currentPosition.some(
+      (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
+    );
   }
 
   function isMovingOffLeft() {
-    if (currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 0)) {
-      return true;
-    } else {
-      return false;
-    }
+    return currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 0);
   }
 
   function softDrop() {
