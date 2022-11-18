@@ -136,7 +136,7 @@ function getRotatedPosition(center, shape, currentRotation) {
         [center - 10, center - 9, center, center + 10],
       ],
     },
-    // the L shape
+    // L shape
     l: {
       rotation: [
         [center - 1, center, center + 1, center + 9],
@@ -146,7 +146,7 @@ function getRotatedPosition(center, shape, currentRotation) {
       ],
     },
 
-    // the s shape
+    // S shape
     s: {
       rotation: [
         [center, center + 1, center + 9, center + 10],
@@ -154,7 +154,7 @@ function getRotatedPosition(center, shape, currentRotation) {
       ],
     },
 
-    // the z shape
+    // Z shape
     z: {
       rotation: [
         [center - 1, center, center + 10, center + 11],
@@ -162,7 +162,7 @@ function getRotatedPosition(center, shape, currentRotation) {
       ],
     },
 
-    // the t shape
+    // T shape
     t: {
       rotation: [
         [center - 1, center, center + 1, center + 10],
@@ -172,6 +172,7 @@ function getRotatedPosition(center, shape, currentRotation) {
       ],
     },
 
+    // O shape
     o: {
       rotation: [[center - 1, center, center + 9, center + 10]],
     },
