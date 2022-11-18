@@ -117,9 +117,9 @@ function getRandomShapeIndex() {
   return randomShapeIndex;
 }
 
-function getRotation(center, shape, currentRotation) {
-  const rotations = {
-    // the stick
+function getRotatedPosition(center, shape, currentRotation) {
+  const shapes = {
+    // I shape
     i: {
       rotation: [
         [center - 2, center - 1, center, center + 1],
@@ -127,7 +127,7 @@ function getRotation(center, shape, currentRotation) {
       ],
     },
 
-    // the J shape
+    // J shape
     j: {
       rotation: [
         [center - 1, center, center + 1, center + 11],
@@ -145,6 +145,7 @@ function getRotation(center, shape, currentRotation) {
         [center - 10, center, center + 10, center + 11],
       ],
     },
+
     // the s shape
     s: {
       rotation: [
@@ -175,7 +176,7 @@ function getRotation(center, shape, currentRotation) {
       rotation: [[center - 1, center, center + 9, center + 10]],
     },
   };
-  return rotations[shape].rotation[currentRotation];
+  return shapes[shape].rotation[currentRotation];
 }
 
-export { generateRandomShape, getRotation };
+export { generateRandomShape, getRotatedPosition };

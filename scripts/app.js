@@ -12,13 +12,20 @@ import {
   MAIN_GRID_ROWS,
 } from "./constants.js";
 
-import { generateRandomShape, getRotation } from "./shapes.js";
+import { generateRandomShape, getRotatedPosition } from "./shapes.js";
 
 function init() {
   let isGameRunning = false;
   let currentShape = null;
   let nextShape = null;
   let shapeIsFalling;
+
+  renderBoards();
+
+  function renderBoards() {
+    createGrid(MAIN_CELL_COUNT, MAIN_CELLS, DOM_ELEMENTS.mainGrid);
+    createGrid(NEXT_CELL_COUNT, NEXT_CELLS, DOM_ELEMENTS.nextGrid);
+  }
 
   function createGrid(cellCount, cellArray, grid) {
     for (let i = 0; i < cellCount; i++) {
@@ -30,13 +37,6 @@ function init() {
     return cellArray;
   }
 
-  function renderBoards() {
-    createGrid(MAIN_CELL_COUNT, MAIN_CELLS, DOM_ELEMENTS.mainGrid);
-    createGrid(NEXT_CELL_COUNT, NEXT_CELLS, DOM_ELEMENTS.nextGrid);
-  }
-
-  renderBoards();
-
   function startPauseToggle() {
     !isGameRunning ? startGame() : pauseGame();
   }
@@ -46,6 +46,12 @@ function init() {
     DOM_ELEMENTS.startButton.textContent = "PAUSE";
     playGame();
   }
+
+  function endGame() {
+    DOM_ELEMENTS.gameOverScreen.style.visibility = "visible";
+    resetGame();
+  }
+
   function pauseGame() {
     isGameRunning = false;
     DOM_ELEMENTS.startButton.textContent = "RESUME";
@@ -54,22 +60,16 @@ function init() {
 
   function resetGame() {
     isGameRunning = false;
-    clearInterval(shapeIsFalling);
-    MAIN_CELLS.forEach((cell) => {
-      cell.removeAttribute("class");
-    });
     DOM_ELEMENTS.startButton.textContent = "START";
+    clearInterval(shapeIsFalling);
+    clearAllCells();
+
     if (nextShape !== null) {
       removePreviewShape();
     }
   }
 
-  function endGame() {
-    DOM_ELEMENTS.gameOverScreen.style.visibility = "visible";
-    resetGame();
-  }
-
-  function playAgain() {
+  function removeGameOverScreen() {
     DOM_ELEMENTS.gameOverScreen.style.visibility = "hidden";
   }
 
@@ -84,6 +84,7 @@ function init() {
         ) {
           deactivateCurrentShape();
           checkIfLineClear();
+
           if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
             setTimeout(endGame, 100);
           } else {
@@ -114,7 +115,7 @@ function init() {
         rotateShape();
       }
       if (event.key === "ArrowDown" && y < MAIN_WIDTH - 1) {
-        softDrop(); // still gives me an error in console but not game breaking
+        softDrop(); // errors in console when dropping "i" shape vertically and hitting bottom of grid, not game breaking
       }
       if (event.key === "ArrowRight") {
         moveShapeToRight();
@@ -131,7 +132,7 @@ function init() {
       setCurrentRotation();
 
       const currentPosition = currentShape.currentPosition;
-      const rotatedShape = getRotation(
+      const rotatedShape = getRotatedPosition(
         currentShape.currentCenter,
         currentShape.shape,
         currentShape.currentRotation
@@ -149,6 +150,19 @@ function init() {
         currentShape.currentPosition = currentPosition;
       }
       addShapeAtPosition();
+    }
+  }
+
+  function setCurrentRotation() {
+    if (
+      !TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) &&
+      currentShape.shape !== "o"
+    ) {
+      currentShape.incrementRotation();
+    }
+
+    if (currentShape.currentRotation >= currentShape.possibleRotations) {
+      currentShape.currentRotation = 0;
     }
   }
 
@@ -170,7 +184,6 @@ function init() {
         currentShape.currentPosition = movedPosition;
         currentShape.incrementCurrentCenter();
       }
-
       addShapeAtPosition();
     }
   }
@@ -225,6 +238,13 @@ function init() {
     }
   }
 
+  function createArrayOfRows() {
+    for (let rows = 0; rows < MAIN_CELL_COUNT; rows += MAIN_WIDTH) {
+      MAIN_GRID_ROWS.push(MAIN_CELLS.slice(rows, rows + MAIN_WIDTH));
+    }
+    return MAIN_GRID_ROWS;
+  }
+
   function renderRandomShape() {
     nextShape === null
       ? (currentShape = generateRandomShape())
@@ -236,7 +256,7 @@ function init() {
   function moveShapeToNewPosition() {
     getNewCenter();
     removeShapeAtPosition();
-    currentShape.currentPosition = getRotation(
+    currentShape.currentPosition = getRotatedPosition(
       currentShape.currentCenter,
       currentShape.shape,
       currentShape.currentRotation
@@ -244,36 +264,42 @@ function init() {
     addShapeAtPosition();
   }
 
+  function getNewCenter() {
+    if (currentShape.currentCenter < MAIN_CELL_COUNT - MAIN_WIDTH) {
+      currentShape.currentCenter += MAIN_WIDTH;
+    }
+  }
+
   function deactivateCurrentShape() {
     clearInterval(shapeIsFalling);
     removeShapeAtPosition();
-    setCurrentShapeToDead();
+    setClassToDead();
   }
 
   function addShapeAtPosition() {
-    setCurrentShapeToFalling();
-    getNewPosition();
+    setClassToFalling();
+    predictNewPosition();
   }
 
   function removeShapeAtPosition() {
     currentShape.currentPosition.forEach((cell) =>
-      MAIN_CELLS[cell].classList.remove(currentShape.falling)
+      MAIN_CELLS[cell].removeAttribute("class")
     );
   }
 
-  function setCurrentShapeToDead() {
+  function setClassToDead() {
     currentShape.currentPosition.forEach((cell) =>
       MAIN_CELLS[cell].classList.add(currentShape.dead)
     );
   }
 
-  function setCurrentShapeToFalling() {
+  function setClassToFalling() {
     currentShape.currentPosition.forEach((cell) =>
       MAIN_CELLS[cell].classList.add(currentShape.falling)
     );
   }
 
-  function getNewPosition() {
+  function predictNewPosition() {
     currentShape.newPosition = currentShape.currentPosition.map(
       (cell) => cell + MAIN_WIDTH
     );
@@ -292,37 +318,16 @@ function init() {
     );
   }
 
-  function setCurrentRotation() {
-    if (
-      !TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) &&
-      currentShape.shape !== "o"
-    ) {
-      currentShape.incrementRotation();
-    }
-
-    if (currentShape.currentRotation >= currentShape.possibleRotations) {
-      currentShape.currentRotation = 0;
-    }
+  function clearAllCells() {
+    MAIN_CELLS.forEach((cell) => {
+      cell.removeAttribute("class");
+    });
   }
-
-  function getNewCenter() {
-    if (currentShape.currentCenter < MAIN_CELL_COUNT - MAIN_WIDTH) {
-      currentShape.currentCenter += MAIN_WIDTH;
-    }
-  }
-
-  function createArrayOfRows() {
-    for (let rows = 0; rows < MAIN_CELL_COUNT; rows += MAIN_WIDTH) {
-      MAIN_GRID_ROWS.push(MAIN_CELLS.slice(rows, rows + MAIN_WIDTH));
-    }
-    return MAIN_GRID_ROWS;
-  }
-
-  window.addEventListener("keydown", handleKeyDown);
 
   DOM_ELEMENTS.resetButton.addEventListener("click", resetGame);
   DOM_ELEMENTS.startButton.addEventListener("click", startPauseToggle);
-  DOM_ELEMENTS.gameOverScreen.addEventListener("click", playAgain);
+  DOM_ELEMENTS.gameOverScreen.addEventListener("click", removeGameOverScreen);
+  window.addEventListener("keydown", handleKeyDown);
 }
 
 window.addEventListener("DOMContentLoaded", init);
