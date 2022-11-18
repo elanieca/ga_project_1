@@ -102,8 +102,8 @@ function init() {
   }
 
   function handleKeyDown(event) {
-    const x = currentShape.currenCenter % MAIN_WIDTH;
-    const y = Math.floor(currentShape.currenCenter / MAIN_HEIGHT);
+    const x = currentShape.currentCenter % MAIN_WIDTH;
+    const y = Math.floor(currentShape.currentCenter / MAIN_HEIGHT);
 
     if (
       MAIN_CELLS.some(
@@ -132,7 +132,7 @@ function init() {
 
       const currentPosition = currentShape.currentPosition;
       const rotatedShape = getRotation(
-        currentShape.currenCenter,
+        currentShape.currentCenter,
         currentShape.shape,
         currentShape.currentRotation
       );
@@ -237,7 +237,7 @@ function init() {
     getNewCenter();
     removeShapeAtPosition();
     currentShape.currentPosition = getRotation(
-      currentShape.currenCenter,
+      currentShape.currentCenter,
       currentShape.shape,
       currentShape.currentRotation
     );
@@ -306,8 +306,8 @@ function init() {
   }
 
   function getNewCenter() {
-    if (currentShape.currenCenter < MAIN_CELL_COUNT - MAIN_WIDTH) {
-      currentShape.currenCenter += MAIN_WIDTH;
+    if (currentShape.currentCenter < MAIN_CELL_COUNT - MAIN_WIDTH) {
+      currentShape.currentCenter += MAIN_WIDTH;
     }
   }
 
