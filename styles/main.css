@@ -21,7 +21,7 @@ body {
 
 .tetris_logo {
   font-family: "Nabla", cursive;
-  text-shadow: 10px 10px rgba(219, 219, 219, 0.546);
+  text-shadow: 10px 10px rgba(129, 129, 129, 0.546);
   font-size: 90px;
   margin-bottom: 15px;
 }
@@ -67,6 +67,20 @@ body {
   color: rgb(255, 255, 255);
   text-shadow: 4px 4px 2px rgba(37, 37, 37, 0.546);
   margin: 10px 0;
+}
+
+button:active {
+  transform: translateY(2px);
+  box-shadow: 2px 2px #4e478b;
+}
+
+button:hover {
+  cursor: crosshair;
+  animation-name: button_bounce;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  transition: background 2s;
+  background: #ca8799;
 }
 
 .game_board {
@@ -155,5 +169,17 @@ body {
   }
   99% {
     text-shadow: 10px 10px rgba(219, 219, 219, 0.546);
+  }
+}
+
+@keyframes button_bounce {
+  33% {
+    font-size: 30px;
+  }
+  66% {
+    font-size: 28px;
+  }
+  99% {
+    font-size: 30px;
   }
 }
