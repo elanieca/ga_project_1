@@ -7,10 +7,8 @@ import {
   MAIN_CELLS,
   NEXT_CELLS,
   GAME_TIME,
-  INITIAL_CENTER_CELL,
   TOP_ROW,
   BOTTOM_ROW,
-  SHAPES,
   MAIN_GRID_ROWS,
 } from "./constants.js";
 
@@ -104,8 +102,8 @@ function init() {
   }
 
   function handleKeyDown(event) {
-    const x = currentShape.centerCell % MAIN_WIDTH;
-    const y = Math.floor(currentShape.centerCell / MAIN_HEIGHT);
+    const x = currentShape.currenCenter % MAIN_WIDTH;
+    const y = Math.floor(currentShape.currenCenter / MAIN_HEIGHT);
 
     if (
       MAIN_CELLS.some(
@@ -134,7 +132,7 @@ function init() {
 
       const currentPosition = currentShape.currentPosition;
       const rotatedShape = getRotation(
-        currentShape.centerCell,
+        currentShape.currenCenter,
         currentShape.shape,
         currentShape.currentRotation
       );
@@ -170,7 +168,7 @@ function init() {
         !movedPosition.some((i) => MAIN_CELLS[i].className.includes("dead"))
       ) {
         currentShape.currentPosition = movedPosition;
-        currentShape.incrementCenterCell();
+        currentShape.incrementCurrentCenter();
       }
 
       addShapeAtPosition();
@@ -189,7 +187,7 @@ function init() {
         !movedPosition.some((i) => MAIN_CELLS[i].className.includes("dead"))
       ) {
         currentShape.currentPosition = movedPosition;
-        currentShape.decreaseCenterCell();
+        currentShape.decreaseCurrentCenter();
       }
       addShapeAtPosition();
     }
@@ -202,7 +200,7 @@ function init() {
       )
     ) {
       removeShapeAtPosition();
-      getNewCenterCell();
+      getNewCenter();
       currentShape.currentPosition = currentShape.newPosition;
       addShapeAtPosition();
     }
@@ -236,10 +234,10 @@ function init() {
   }
 
   function moveShapeToNewPosition() {
-    getNewCenterCell();
+    getNewCenter();
     removeShapeAtPosition();
     currentShape.currentPosition = getRotation(
-      currentShape.centerCell,
+      currentShape.currenCenter,
       currentShape.shape,
       currentShape.currentRotation
     );
@@ -307,9 +305,9 @@ function init() {
     }
   }
 
-  function getNewCenterCell() {
-    if (currentShape.centerCell < MAIN_CELL_COUNT - MAIN_WIDTH) {
-      currentShape.centerCell += MAIN_WIDTH;
+  function getNewCenter() {
+    if (currentShape.currenCenter < MAIN_CELL_COUNT - MAIN_WIDTH) {
+      currentShape.currenCenter += MAIN_WIDTH;
     }
   }
 

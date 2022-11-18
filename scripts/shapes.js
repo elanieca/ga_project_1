@@ -1,10 +1,4 @@
-import {
-  INITIAL_CENTER_CELL,
-  MAIN_CELLS,
-  MAIN_WIDTH,
-  SHAPES,
-  TOP_ROW,
-} from "./constants.js";
+import { INITIAL_CENTER, SHAPES } from "./constants.js";
 
 class Shape {
   constructor(renderPosition, previewPosition, possibleRotations, shape) {
@@ -12,7 +6,7 @@ class Shape {
     this.renderPosition = renderPosition;
     this.currentPosition = renderPosition;
     this.previewPosition = previewPosition;
-    this.centerCell = INITIAL_CENTER_CELL;
+    this.currentCenter = INITIAL_CENTER;
     this.currentRotation = 0;
     this.possibleRotations = possibleRotations;
     this.newPosition = [];
@@ -22,30 +16,100 @@ class Shape {
   incrementRotation() {
     this.currentRotation++;
   }
-  incrementCenterCell() {
-    this.centerCell++;
+  incrementCurrentCenter() {
+    this.currentCenter++;
   }
-  decreaseCenterCell() {
-    this.centerCell--;
+  decreaseCurrentCenter() {
+    this.currentCenter--;
   }
 }
 
 function generateRandomShape() {
   switch (getRandomShapeIndex()) {
     case 0:
-      return new Shape([3, 4, 5, 6], [7, 8, 9, 10], 2, "i");
+      return new Shape(
+        [
+          INITIAL_CENTER - 2,
+          INITIAL_CENTER - 1,
+          INITIAL_CENTER,
+          INITIAL_CENTER + 1,
+        ],
+        [7, 8, 9, 10],
+        2,
+        "i"
+      );
     case 1:
-      return new Shape([4, 5, 6, 16], [8, 9, 10, 16], 4, "j");
+      return new Shape(
+        [
+          INITIAL_CENTER - 1,
+          INITIAL_CENTER,
+          INITIAL_CENTER + 1,
+          INITIAL_CENTER + 11,
+        ],
+        [8, 9, 10, 16],
+        4,
+        "j"
+      );
     case 2:
-      return new Shape([4, 5, 6, 14], [8, 9, 10, 14], 4, "l");
+      return new Shape(
+        [
+          INITIAL_CENTER - 1,
+          INITIAL_CENTER,
+          INITIAL_CENTER + 1,
+          INITIAL_CENTER + 9,
+        ],
+        [8, 9, 10, 14],
+        4,
+        "l"
+      );
     case 3:
-      return new Shape([5, 6, 14, 15], [9, 10, 14, 15], 2, "s");
+      return new Shape(
+        [
+          INITIAL_CENTER,
+          INITIAL_CENTER + 1,
+          INITIAL_CENTER + 9,
+          INITIAL_CENTER + 10,
+        ],
+        [9, 10, 14, 15],
+        2,
+        "s"
+      );
     case 4:
-      return new Shape([4, 5, 15, 16], [8, 9, 15, 16], 2, "z");
+      return new Shape(
+        [
+          INITIAL_CENTER - 1,
+          INITIAL_CENTER,
+          INITIAL_CENTER + 10,
+          INITIAL_CENTER + 11,
+        ],
+        [8, 9, 15, 16],
+        2,
+        "z"
+      );
     case 5:
-      return new Shape([4, 5, 6, 15], [8, 9, 10, 15], 4, "t");
+      return new Shape(
+        [
+          INITIAL_CENTER - 1,
+          INITIAL_CENTER,
+          INITIAL_CENTER + 1,
+          INITIAL_CENTER + 10,
+        ],
+        [8, 9, 10, 15],
+        4,
+        "t"
+      );
     case 6:
-      return new Shape([4, 5, 14, 15], [8, 9, 14, 15], 1, "o");
+      return new Shape(
+        [
+          INITIAL_CENTER - 1,
+          INITIAL_CENTER,
+          INITIAL_CENTER + 9,
+          INITIAL_CENTER + 10,
+        ],
+        [8, 9, 14, 15],
+        1,
+        "o"
+      );
   }
 }
 function getRandomShapeIndex() {
