@@ -60,8 +60,10 @@ function init() {
     MAIN_CELLS.forEach((cell) => {
       cell.removeAttribute("class");
     });
-    removePreviewShape();
     DOM_ELEMENTS.startButton.textContent = "START";
+    if (nextShape !== null) {
+      removePreviewShape();
+    }
   }
 
   function endGame() {
