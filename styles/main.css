@@ -1,55 +1,159 @@
 * {
   box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 body {
   height: 100vh;
+  width: 100vw;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2)),
+    url("../images/arcade_background.gif");
+  background-size: cover;
+  background-position: center;
+  color: rgb(219, 219, 219);
+  padding: 20px;
 }
 
-.game_board {
-  height: 700px;
-  width: 350px;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
+.tetris_logo {
+  font-family: "Nabla", cursive;
+  text-shadow: 10px 10px rgba(219, 219, 219, 0.546);
+  font-size: 90px;
+  margin-bottom: 15px;
 }
 
-.main_grid {
-  height: 100%;
+.tetris_logo:hover {
+  animation-name: tetris_logo_bounce;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+}
+
+.main_area {
   width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.main_grid div {
-  height: 35px;
-  width: 35px;
-  border: 1px solid grey;
-}
-
-.next_grid {
-  height: 140px;
-  width: 210px;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.next_grid div {
-  height: 35px;
-  width: 35px;
-  border: 1px solid grey;
 }
 
 .controls_wrapper {
+  height: 250px;
+  width: 250px;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(58, 58, 58);
+  background-color: rgba(173, 173, 173, 0.17);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
 }
 
-.level_info {
+#start,
+#reset {
+  height: 50px;
+  width: 150px;
+  border: 0;
+  border-radius: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.6);
+  background-color: rgba(133, 133, 133, 0.367);
+  font-family: "Rubik Glitch", cursive;
+  font-family: "Nabla", cursive;
+  font-size: 30px;
+  color: rgb(255, 255, 255);
+  text-shadow: 4px 4px 2px rgba(37, 37, 37, 0.546);
+  margin: 10px 0;
+}
+
+.game_board {
+  height: 640px;
+  width: 330px;
   display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.8);
+  background-color: rgba(131, 131, 131, 0.4);
+  border: 1px solid rgb(88, 88, 88);
+  border-radius: 10px;
+  margin: 0 50px;
+}
+
+.main_grid {
+  height: 620px;
+  width: 310px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  border-radius: 5px;
+}
+
+.main_grid div {
+  height: 31px;
+  width: 31px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
+}
+
+.game_info {
+  height: 250px;
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(58, 58, 58);
+  background-color: rgba(173, 173, 173, 0.17);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  text-align: center;
+  font-family: "Rubik Glitch", cursive;
+  font-family: "Nabla", cursive;
+  font-size: 30px;
+}
+
+.next_piece {
+  margin-bottom: 20px;
+}
+
+.next_piece p {
+  margin-bottom: 10px;
+  text-shadow: 4px 4px 2px rgba(0, 0, 0, 0.546);
+}
+
+.next_grid {
+  height: 132px;
+  width: 198px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.8);
+  background-color: rgba(131, 131, 131, 0.3);
+  border-radius: 5px;
+}
+
+.next_grid div {
+  height: 33px;
+  width: 33px;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.25);
+}
+
+@keyframes tetris_logo_bounce {
+  33% {
+    text-shadow: 10px 10px rgba(219, 219, 219, 0.546);
+  }
+  66% {
+    text-shadow: 7px 7px rgba(219, 219, 219, 0.546);
+  }
+  99% {
+    text-shadow: 10px 10px rgba(219, 219, 219, 0.546);
+  }
 }
