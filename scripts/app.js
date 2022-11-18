@@ -74,31 +74,54 @@ function init() {
   }
 
   function playGame() {
-    if (MAIN_CELLS.some((cell) => cell.className.includes("falling"))) {
-      shapeIsFalling = setInterval(() => {
-        if (
-          BOTTOM_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) ||
-          currentShape.newPosition.some((i) =>
-            MAIN_CELLS[i].className.includes("dead")
-          )
-        ) {
-          deactivateCurrentShape();
-          checkIfLineClear();
-
-          if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
-            setTimeout(endGame, 100);
-          } else {
-            removePreviewShape();
-            playGame();
-          }
-        } else {
-          moveShapeToNewPosition();
-        }
-      }, GAME_TIME);
-    } else {
+    if (!isFalling()) {
       renderRandomShape();
       addPreviewShape();
       playGame();
+    } else {
+      shapeIsFalling = setInterval(() => {
+        if (!isColliding()) {
+          moveShapeToNewPosition();
+        } else {
+          deactivateCurrentShape();
+          checkIfLineClear();
+          if (!isFillingTopOfGrid()) {
+            removePreviewShape();
+            playGame();
+          } else {
+            setTimeout(endGame, 100);
+          }
+        }
+      }, GAME_TIME);
+    }
+  }
+
+  function isFalling() {
+    if (MAIN_CELLS.some((cell) => cell.className.includes("falling"))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function isColliding() {
+    if (
+      BOTTOM_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) ||
+      currentShape.newPosition.some((i) =>
+        MAIN_CELLS[i].className.includes("dead")
+      )
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function isFillingTopOfGrid() {
+    if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"))) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -106,11 +129,7 @@ function init() {
     const x = currentShape.currentCenter % MAIN_WIDTH;
     const y = Math.floor(currentShape.currentCenter / MAIN_HEIGHT);
 
-    if (
-      MAIN_CELLS.some(
-        (cell) => cell.className.includes("falling") && isGameRunning
-      )
-    ) {
+    if (isFalling() && isGameRunning) {
       if (event.key === "ArrowUp" && x > 0 && x < MAIN_WIDTH - 1) {
         rotateShape();
       }
@@ -127,7 +146,7 @@ function init() {
   }
 
   function rotateShape() {
-    if (!TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling"))) {
+    if (!isTopRow()) {
       removeShapeAtPosition();
       setCurrentRotation();
 
@@ -142,11 +161,7 @@ function init() {
         currentShape.currentPosition = rotatedShape;
       }
 
-      if (
-        currentShape.currentPosition.some((i) =>
-          MAIN_CELLS[i].className.includes("dead")
-        )
-      ) {
+      if (isRotatingIntoDeadShape()) {
         currentShape.currentPosition = currentPosition;
       }
       addShapeAtPosition();
@@ -154,10 +169,7 @@ function init() {
   }
 
   function setCurrentRotation() {
-    if (
-      !TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) &&
-      currentShape.shape !== "o"
-    ) {
+    if (!isTopRow() && currentShape.shape !== "o") {
       currentShape.incrementRotation();
     }
 
@@ -166,12 +178,28 @@ function init() {
     }
   }
 
-  function moveShapeToRight() {
+  function isTopRow() {
+    if (TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling"))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function isRotatingIntoDeadShape() {
     if (
-      !currentShape.currentPosition.some(
-        (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
+      currentShape.currentPosition.some((i) =>
+        MAIN_CELLS[i].className.includes("dead")
       )
     ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function moveShapeToRight() {
+    if (!isMovingOffRight()) {
       removeShapeAtPosition();
 
       const movedPosition = currentShape.currentPosition.map(
@@ -189,7 +217,7 @@ function init() {
   }
 
   function moveShapeToLeft() {
-    if (!currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 0)) {
+    if (!isMovingOffLeft()) {
       removeShapeAtPosition();
 
       const movedPosition = currentShape.currentPosition.map(
@@ -206,12 +234,28 @@ function init() {
     }
   }
 
-  function softDrop() {
+  function isMovingOffRight() {
     if (
-      !currentShape.newPosition.some((i) =>
-        MAIN_CELLS[i].className.includes("dead")
+      currentShape.currentPosition.some(
+        (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
       )
     ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function isMovingOffLeft() {
+    if (currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 0)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function softDrop() {
+    if (!isColliding()) {
       removeShapeAtPosition();
       getNewCenter();
       currentShape.currentPosition = currentShape.newPosition;
