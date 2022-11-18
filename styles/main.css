@@ -103,7 +103,7 @@ body {
 
 .controls {
   height: 200px;
-  width: 220px;
+  width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -111,6 +111,7 @@ body {
   font-family: "Cabin Sketch", cursive;
   font-size: 20px;
   text-shadow: 4px 4px 2px rgba(37, 37, 37, 0.546);
+  padding-right: 10px;
 }
 
 .controls div {
@@ -118,9 +119,20 @@ body {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  text-align: justify;
 }
+
+.controls div p {
+  width: 65px;
+}
+
+#left {
+  text-align: right;
+}
+
 #arrow_keys {
   height: 120px;
+  padding: 0 5px;
 }
 
 .game_board {
