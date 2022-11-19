@@ -12,7 +12,7 @@ import {
   MAIN_GRID_ROWS,
 } from "./constants.js";
 
-import { generateRandomShape, getRotatedPosition } from "./shapes.js";
+import { generateRandomShape, getPosition } from "./shapes.js";
 
 function init() {
   let isGameRunning = false;
@@ -143,7 +143,7 @@ function init() {
       setCurrentRotation();
 
       const currentPosition = currentShape.currentPosition;
-      const rotatedShape = getRotatedPosition(
+      const rotatedShape = getPosition(
         currentShape.currentCenter,
         currentShape.shape,
         currentShape.currentRotation
@@ -272,7 +272,7 @@ function init() {
   function moveShapeToNewPosition() {
     getNewCenter();
     removeShapeAtPosition();
-    currentShape.currentPosition = getRotatedPosition(
+    currentShape.currentPosition = getPosition(
       currentShape.currentCenter,
       currentShape.shape,
       currentShape.currentRotation

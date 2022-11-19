@@ -1,7 +1,7 @@
 import { INITIAL_CENTER, SHAPES } from "./constants.js";
 
 class Shape {
-  constructor(renderPosition, previewPosition, possibleRotations, shape) {
+  constructor(shape, renderPosition, previewPosition, possibleRotations) {
     this.shape = shape;
     this.renderPosition = renderPosition;
     this.currentPosition = renderPosition;
@@ -28,96 +28,68 @@ function generateRandomShape() {
   switch (getRandomShapeIndex()) {
     case 0:
       return new Shape(
-        [
-          INITIAL_CENTER - 2,
-          INITIAL_CENTER - 1,
-          INITIAL_CENTER,
-          INITIAL_CENTER + 1,
-        ],
+        "i",
+        getPosition(INITIAL_CENTER, "i", 0),
         [7, 8, 9, 10],
-        2,
-        "i"
+        2
       );
+
     case 1:
       return new Shape(
-        [
-          INITIAL_CENTER - 1,
-          INITIAL_CENTER,
-          INITIAL_CENTER + 1,
-          INITIAL_CENTER + 11,
-        ],
+        "j",
+        getPosition(INITIAL_CENTER, "j", 0),
         [8, 9, 10, 16],
-        4,
-        "j"
+        4
       );
+
     case 2:
       return new Shape(
-        [
-          INITIAL_CENTER - 1,
-          INITIAL_CENTER,
-          INITIAL_CENTER + 1,
-          INITIAL_CENTER + 9,
-        ],
+        "l",
+        getPosition(INITIAL_CENTER, "l", 0),
         [8, 9, 10, 14],
-        4,
-        "l"
+        4
       );
+
     case 3:
       return new Shape(
-        [
-          INITIAL_CENTER,
-          INITIAL_CENTER + 1,
-          INITIAL_CENTER + 9,
-          INITIAL_CENTER + 10,
-        ],
+        "s",
+        getPosition(INITIAL_CENTER, "s", 0),
         [9, 10, 14, 15],
-        2,
-        "s"
+        2
       );
+
     case 4:
       return new Shape(
-        [
-          INITIAL_CENTER - 1,
-          INITIAL_CENTER,
-          INITIAL_CENTER + 10,
-          INITIAL_CENTER + 11,
-        ],
+        "z",
+        getPosition(INITIAL_CENTER, "z", 0),
         [8, 9, 15, 16],
-        2,
-        "z"
+        2
       );
+
     case 5:
       return new Shape(
-        [
-          INITIAL_CENTER - 1,
-          INITIAL_CENTER,
-          INITIAL_CENTER + 1,
-          INITIAL_CENTER + 10,
-        ],
+        "t",
+        getPosition(INITIAL_CENTER, "t", 0),
         [8, 9, 10, 15],
-        4,
-        "t"
+        4
       );
+
     case 6:
       return new Shape(
-        [
-          INITIAL_CENTER - 1,
-          INITIAL_CENTER,
-          INITIAL_CENTER + 9,
-          INITIAL_CENTER + 10,
-        ],
+        "o",
+        getPosition(INITIAL_CENTER, "o", 0),
         [8, 9, 14, 15],
-        1,
-        "o"
+        1
       );
   }
 }
+
 function getRandomShapeIndex() {
   const randomShapeIndex = Math.floor(Math.random() * SHAPES.length);
   return randomShapeIndex;
 }
 
-function getRotatedPosition(center, shape, currentRotation) {
+function getPosition(center, shape, currentRotation) {
   const shapes = {
     // I shape
     i: {
@@ -180,4 +152,4 @@ function getRotatedPosition(center, shape, currentRotation) {
   return shapes[shape].rotation[currentRotation];
 }
 
-export { generateRandomShape, getRotatedPosition };
+export { generateRandomShape, getPosition };
