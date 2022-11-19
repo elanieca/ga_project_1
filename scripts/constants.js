@@ -9,8 +9,6 @@ const MAIN_CELLS = [];
 const NEXT_CELLS = [];
 const MAIN_GRID_ROWS = [];
 const INITIAL_CENTER = Math.floor(MAIN_WIDTH / 2);
-const PREVIEW_X = Math.floor(NEXT_WIDTH / 2);
-const PREVIEW_CENTER = PREVIEW_X * PREVIEW_X;
 
 const TOP_ROW = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const BOTTOM_ROW = TOP_ROW.map((cell) => cell + 190);
@@ -35,7 +33,6 @@ export {
   NEXT_CELLS,
   MAIN_GRID_ROWS,
   INITIAL_CENTER,
-  PREVIEW_CENTER,
   TOP_ROW,
   BOTTOM_ROW,
   SHAPES,
