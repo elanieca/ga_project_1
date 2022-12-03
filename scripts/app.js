@@ -9,7 +9,7 @@ import {
   GAME_TIME,
   TOP_ROW,
   BOTTOM_ROW,
-  MAIN_GRID_ROWS,
+  MAIN_GRID_ROWS
 } from "./constants.js";
 
 import { generateRandomShape, getPosition } from "./shapes.js";
@@ -117,21 +117,21 @@ function init() {
     return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"));
   }
 
-  function handleKeyDown(event) {
+  function handleKeyDown({ keyCode }) {
     const x = currentShape.currentCenter % MAIN_WIDTH;
     const y = Math.floor(currentShape.currentCenter / MAIN_HEIGHT);
 
     if (isFalling() && isGameRunning) {
-      if (event.key === "ArrowUp" && x > 0 && x < MAIN_WIDTH - 1) {
+      if ((keyCode === 38 || keyCode === 87) && x > 0 && x < MAIN_WIDTH - 1) {
         rotateShape();
       }
-      if (event.key === "ArrowDown" && y < MAIN_WIDTH - 1) {
+      if ((keyCode === 40 || keyCode === 83) && y < MAIN_WIDTH - 1) {
         softDrop(); // errors in console when dropping "i" shape vertically and hitting bottom of grid, not game breaking
       }
-      if (event.key === "ArrowRight") {
+      if (keyCode === 39 || keyCode === 68) {
         moveShapeToRight();
       }
-      if (event.key === "ArrowLeft") {
+      if (keyCode === 37 || keyCode === 65) {
         moveShapeToLeft();
       }
     }
