@@ -10,9 +10,9 @@ import {
   TOP_ROW,
   BOTTOM_ROW,
   MAIN_GRID_ROWS
-} from "./constants.js";
+} from './constants.js';
 
-import { generateRandomShape, getPosition } from "./shapes.js";
+import { generateRandomShape, getPosition } from './shapes.js';
 
 function init() {
   let isGameRunning = false;
@@ -29,8 +29,8 @@ function init() {
 
   function createGrid(cellCount, cellArray, grid) {
     for (let i = 0; i < cellCount; i++) {
-      const cell = document.createElement("div");
-      cell.setAttribute("data-index", i);
+      const cell = document.createElement('div');
+      cell.setAttribute('data-index', i);
       cellArray.push(cell);
       grid.appendChild(cell);
     }
@@ -43,24 +43,26 @@ function init() {
 
   function startGame() {
     isGameRunning = true;
-    DOM_ELEMENTS.startButton.textContent = "PAUSE";
+    DOM_ELEMENTS.startButton.textContent = 'PAUSE';
     playGame();
   }
 
   function endGame() {
-    DOM_ELEMENTS.gameOverScreen.style.visibility = "visible";
+    DOM_ELEMENTS.gameOverScreen.style.visibility = 'visible';
+    DOM_ELEMENTS.startButton.disabled = true;
+    DOM_ELEMENTS.resetButton.disabled = true;
     resetGame();
   }
 
   function pauseGame() {
     isGameRunning = false;
-    DOM_ELEMENTS.startButton.textContent = "RESUME";
+    DOM_ELEMENTS.startButton.textContent = 'RESUME';
     clearInterval(shapeIsFalling);
   }
 
   function resetGame() {
     isGameRunning = false;
-    DOM_ELEMENTS.startButton.textContent = "START";
+    DOM_ELEMENTS.startButton.textContent = 'START';
     clearInterval(shapeIsFalling);
     clearAllCells();
 
@@ -70,7 +72,9 @@ function init() {
   }
 
   function removeGameOverScreen() {
-    DOM_ELEMENTS.gameOverScreen.style.visibility = "hidden";
+    DOM_ELEMENTS.gameOverScreen.style.visibility = 'hidden';
+    DOM_ELEMENTS.startButton.disabled = false;
+    DOM_ELEMENTS.resetButton.disabled = false;
   }
 
   function playGame() {
@@ -89,7 +93,7 @@ function init() {
             removePreviewShape();
             playGame();
           } else {
-            setTimeout(endGame, 100);
+            setTimeout(endGame, 50);
           }
         }
       }, GAME_TIME);
@@ -97,24 +101,20 @@ function init() {
   }
 
   function isFalling() {
-    return MAIN_CELLS.some((cell) => cell.className.includes("falling"));
+    return MAIN_CELLS.some((cell) => cell.className.includes('falling'));
   }
 
   function isColliding() {
-    if (
-      BOTTOM_ROW.some((i) => MAIN_CELLS[i].className.includes("falling")) ||
+    return (
+      BOTTOM_ROW.some((i) => MAIN_CELLS[i].className.includes('falling')) ||
       currentShape.newPosition.some((i) =>
-        MAIN_CELLS[i].className.includes("dead")
+        MAIN_CELLS[i].className.includes('dead')
       )
-    ) {
-      return true;
-    } else {
-      return false;
-    }
+    );
   }
 
   function isFillingTopOfGrid() {
-    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("dead"));
+    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes('dead'));
   }
 
   function handleKeyDown({ keyCode }) {
@@ -125,8 +125,8 @@ function init() {
       if ((keyCode === 38 || keyCode === 87) && x > 0 && x < MAIN_WIDTH - 1) {
         rotateShape();
       }
-      if ((keyCode === 40 || keyCode === 83) && y < MAIN_WIDTH - 1) {
-        softDrop(); // errors in console when dropping "i" shape vertically and hitting bottom of grid, not game breaking
+      if ((keyCode === 40 || keyCode === 83) && y < MAIN_WIDTH) {
+        softDrop();
       }
       if (keyCode === 39 || keyCode === 68) {
         moveShapeToRight();
@@ -143,40 +143,40 @@ function init() {
       setCurrentRotation();
 
       const currentPosition = currentShape.currentPosition;
+
       const rotatedShape = getPosition(
         currentShape.currentCenter,
         currentShape.shape,
         currentShape.currentRotation
       );
 
-      if (currentShape.shape !== "o") {
-        currentShape.currentPosition = rotatedShape;
-      }
+      currentShape.currentPosition = rotatedShape;
 
       if (isRotatingIntoDeadShape()) {
         currentShape.currentPosition = currentPosition;
       }
+
       addShapeAtPosition();
     }
   }
 
   function setCurrentRotation() {
-    if (!isTopRow() && currentShape.shape !== "o") {
+    if (currentShape.shape !== 'o') {
       currentShape.incrementRotation();
     }
 
-    if (currentShape.currentRotation >= currentShape.possibleRotations) {
+    if (currentShape.currentRotation === currentShape.possibleRotations) {
       currentShape.currentRotation = 0;
     }
   }
 
   function isTopRow() {
-    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes("falling"));
+    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes('falling'));
   }
 
   function isRotatingIntoDeadShape() {
     return currentShape.currentPosition.some((i) =>
-      MAIN_CELLS[i].className.includes("dead")
+      MAIN_CELLS[i].className.includes('dead')
     );
   }
 
@@ -188,12 +188,15 @@ function init() {
         (cell) => cell + 1
       );
 
-      if (
-        !movedPosition.some((i) => MAIN_CELLS[i].className.includes("dead"))
-      ) {
+      const isColliding = movedPosition.some((i) =>
+        MAIN_CELLS[i].className.includes('dead')
+      );
+
+      if (!isColliding) {
         currentShape.currentPosition = movedPosition;
         currentShape.incrementCurrentCenter();
       }
+
       addShapeAtPosition();
     }
   }
@@ -206,12 +209,15 @@ function init() {
         (cell) => cell - 1
       );
 
-      if (
-        !movedPosition.some((i) => MAIN_CELLS[i].className.includes("dead"))
-      ) {
+      const isColliding = movedPosition.some((i) =>
+        MAIN_CELLS[i].className.includes('dead')
+      );
+
+      if (!isColliding) {
         currentShape.currentPosition = movedPosition;
         currentShape.decreaseCurrentCenter();
       }
+
       addShapeAtPosition();
     }
   }
@@ -230,8 +236,15 @@ function init() {
     if (!isColliding()) {
       removeShapeAtPosition();
       getNewCenter();
-      currentShape.currentPosition = currentShape.newPosition;
-      addShapeAtPosition();
+
+      const isOffGrid = currentShape.newPosition.some(
+        (cell) => cell > MAIN_CELL_COUNT - 1
+      );
+
+      if (!isOffGrid) {
+        currentShape.currentPosition = currentShape.newPosition;
+        addShapeAtPosition();
+      }
     }
   }
 
@@ -240,7 +253,7 @@ function init() {
 
     for (let row = MAIN_HEIGHT - 1; row > 0; row--) {
       while (
-        MAIN_GRID_ROWS[row].every((cell) => cell.className.includes("dead"))
+        MAIN_GRID_ROWS[row].every((cell) => cell.className.includes('dead'))
       ) {
         let currentRow = row;
         while (currentRow > 0) {
@@ -281,7 +294,10 @@ function init() {
   }
 
   function getNewCenter() {
-    if (currentShape.currentCenter < MAIN_CELL_COUNT - MAIN_WIDTH) {
+    const isInsideGrid =
+      currentShape.currentCenter < MAIN_CELL_COUNT - MAIN_WIDTH;
+
+    if (isInsideGrid) {
       currentShape.currentCenter += MAIN_WIDTH;
     }
   }
@@ -294,56 +310,55 @@ function init() {
 
   function addShapeAtPosition() {
     setClassToFalling();
-    predictNewPosition();
+    getNewPosition();
   }
 
   function removeShapeAtPosition() {
-    currentShape.currentPosition.forEach((cell) =>
-      MAIN_CELLS[cell].removeAttribute("class")
+    currentShape.currentPosition.forEach((i) =>
+      MAIN_CELLS[i].removeAttribute('class')
     );
   }
 
   function setClassToDead() {
-    currentShape.currentPosition.forEach((cell) =>
-      MAIN_CELLS[cell].classList.add(currentShape.dead)
+    currentShape.currentPosition.forEach((i) =>
+      MAIN_CELLS[i].classList.add(currentShape.dead)
     );
   }
 
   function setClassToFalling() {
-    currentShape.currentPosition.forEach((cell) =>
-      MAIN_CELLS[cell].classList.add(currentShape.falling)
+    currentShape.currentPosition.forEach((i) =>
+      MAIN_CELLS[i].classList.add(currentShape.falling)
     );
   }
 
-  function predictNewPosition() {
+  function getNewPosition() {
     currentShape.newPosition = currentShape.currentPosition.map(
       (cell) => cell + MAIN_WIDTH
     );
-    return currentShape.newPosition;
   }
 
   function addPreviewShape() {
-    nextShape.previewPosition.forEach((cell) =>
-      NEXT_CELLS[cell].classList.add(nextShape.falling)
+    nextShape.previewPosition.forEach((i) =>
+      NEXT_CELLS[i].classList.add(nextShape.falling)
     );
   }
 
   function removePreviewShape() {
-    nextShape.previewPosition.forEach((cell) =>
-      NEXT_CELLS[cell].classList.remove(nextShape.falling)
+    nextShape.previewPosition.forEach((i) =>
+      NEXT_CELLS[i].classList.remove(nextShape.falling)
     );
   }
 
   function clearAllCells() {
     MAIN_CELLS.forEach((cell) => {
-      cell.removeAttribute("class");
+      cell.removeAttribute('class');
     });
   }
 
-  DOM_ELEMENTS.resetButton.addEventListener("click", resetGame);
-  DOM_ELEMENTS.startButton.addEventListener("click", startPauseToggle);
-  DOM_ELEMENTS.gameOverScreen.addEventListener("click", removeGameOverScreen);
-  window.addEventListener("keydown", handleKeyDown);
+  DOM_ELEMENTS.resetButton.addEventListener('click', resetGame);
+  DOM_ELEMENTS.startButton.addEventListener('click', startPauseToggle);
+  DOM_ELEMENTS.gameOverScreen.addEventListener('click', removeGameOverScreen);
+  window.addEventListener('keydown', handleKeyDown);
 }
 
-window.addEventListener("DOMContentLoaded", init);
+window.addEventListener('DOMContentLoaded', init);
