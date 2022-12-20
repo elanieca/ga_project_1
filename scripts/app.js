@@ -89,6 +89,7 @@ function init() {
         } else {
           deactivateCurrentShape();
           checkIfLineClear();
+
           if (!isFillingTopOfGrid()) {
             removePreviewShape();
             playGame();
