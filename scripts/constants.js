@@ -13,14 +13,14 @@ const INITIAL_CENTER = Math.floor(MAIN_WIDTH / 2);
 const TOP_ROW = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 const BOTTOM_ROW = TOP_ROW.map((cell) => cell + 190);
 
-const SHAPES = ["i", "j", "l", "s", "z", "t", "o"];
+const SHAPES = ['i', 'j', 'l', 's', 'z', 't', 'o'];
 
 const DOM_ELEMENTS = {
-  mainGrid: document.querySelector(".main_grid"),
-  nextGrid: document.querySelector(".next_grid"),
-  startButton: document.querySelector("#start"),
-  resetButton: document.querySelector("#reset"),
-  gameOverScreen: document.querySelector("#game_over"),
+  mainGrid: document.querySelector('.main_grid'),
+  nextGrid: document.querySelector('.next_grid'),
+  startButton: document.querySelector('#start'),
+  resetButton: document.querySelector('#reset'),
+  gameOverScreen: document.querySelector('#game_over')
 };
 
 export {
@@ -36,5 +36,5 @@ export {
   TOP_ROW,
   BOTTOM_ROW,
   SHAPES,
-  DOM_ELEMENTS,
+  DOM_ELEMENTS
 };
