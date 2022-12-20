@@ -336,6 +336,8 @@ function init() {
     currentShape.newPosition = currentShape.currentPosition.map(
       (cell) => cell + MAIN_WIDTH
     );
+
+    return currentShape.newPosition;
   }
 
   function addPreviewShape() {
