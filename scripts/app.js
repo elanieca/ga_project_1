@@ -78,7 +78,13 @@ function init() {
   }
 
   function playGame() {
-    if (!isFalling()) {
+    const isFalling = MAIN_CELLS.some((cell) =>
+      cell.className.includes('falling')
+    );
+
+    const isFillingTopOfGrid = someInRowHasClassName(TOP_ROW, 'dead');
+
+    if (!isFalling) {
       renderRandomShape();
       addPreviewShape();
       playGame();
@@ -90,48 +96,43 @@ function init() {
           deactivateCurrentShape();
           checkIfLineClear();
 
-          if (!isFillingTopOfGrid()) {
+          if (!isFillingTopOfGrid) {
             removePreviewShape();
             playGame();
           } else {
-            setTimeout(endGame, 50);
+            endGame();
           }
         }
       }, GAME_TIME);
     }
   }
 
-  function isFalling() {
-    return MAIN_CELLS.some((cell) => cell.className.includes('falling'));
+  function someInRowHasClassName(row, className) {
+    return row.some((i) => MAIN_CELLS[i].className.includes(className));
   }
 
   function isColliding() {
     return (
-      BOTTOM_ROW.some((i) => MAIN_CELLS[i].className.includes('falling')) ||
-      currentShape.newPosition.some((i) =>
-        MAIN_CELLS[i].className.includes('dead')
-      )
+      someInRowHasClassName(BOTTOM_ROW, 'falling') ||
+      someInRowHasClassName(currentShape.newPosition, 'dead')
     );
   }
 
-  function isFillingTopOfGrid() {
-    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes('dead'));
-  }
-
   function handleKeyDown({ keyCode }) {
-    const x = currentShape.currentCenter % MAIN_WIDTH;
-    const y = Math.floor(currentShape.currentCenter / MAIN_HEIGHT);
-
-    if (isFalling() && isGameRunning) {
-      if ((keyCode === 38 || keyCode === 87) && x > 0 && x < MAIN_WIDTH - 1) {
+    if (isGameRunning) {
+      // arrow up or w
+      if (keyCode === 38 || keyCode === 87) {
         rotateShape();
       }
-      if ((keyCode === 40 || keyCode === 83) && y < MAIN_WIDTH) {
+      // arrow down or s
+      if (keyCode === 40 || keyCode === 83) {
         softDrop();
       }
+      // arrow right or d
       if (keyCode === 39 || keyCode === 68) {
         moveShapeToRight();
       }
+      // arrow left or a
       if (keyCode === 37 || keyCode === 65) {
         moveShapeToLeft();
       }
@@ -139,11 +140,20 @@ function init() {
   }
 
   function rotateShape() {
-    if (!isTopRow()) {
+    const x = currentShape.currentCenter % MAIN_WIDTH;
+    const y = Math.floor(currentShape.currentCenter / MAIN_HEIGHT);
+
+    const isRow = (row) => row.includes(currentShape.currentCenter);
+
+    const isInsideGrid =
+      (currentShape.shape === 'i' ? y < MAIN_WIDTH - 1 && x > 1 : x > 0) &&
+      x < MAIN_WIDTH - 1;
+
+    const isRotateable = !isRow(TOP_ROW) && !isRow(BOTTOM_ROW) && isInsideGrid;
+
+    if (isRotateable) {
       removeShapeAtPosition();
       setCurrentRotation();
-
-      const currentPosition = currentShape.currentPosition;
 
       const rotatedShape = getPosition(
         currentShape.currentCenter,
@@ -151,10 +161,13 @@ function init() {
         currentShape.currentRotation
       );
 
-      currentShape.currentPosition = rotatedShape;
+      const isRotatingIntoDeadShape = someInRowHasClassName(
+        rotatedShape,
+        'dead'
+      );
 
-      if (isRotatingIntoDeadShape()) {
-        currentShape.currentPosition = currentPosition;
+      if (!isRotatingIntoDeadShape) {
+        currentShape.currentPosition = rotatedShape;
       }
 
       addShapeAtPosition();
@@ -171,27 +184,19 @@ function init() {
     }
   }
 
-  function isTopRow() {
-    return TOP_ROW.some((i) => MAIN_CELLS[i].className.includes('falling'));
-  }
-
-  function isRotatingIntoDeadShape() {
-    return currentShape.currentPosition.some((i) =>
-      MAIN_CELLS[i].className.includes('dead')
-    );
-  }
-
   function moveShapeToRight() {
-    if (!isMovingOffRight()) {
+    const isMovingOffRight = currentShape.currentPosition.some(
+      (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
+    );
+
+    if (!isMovingOffRight) {
       removeShapeAtPosition();
 
       const movedPosition = currentShape.currentPosition.map(
         (cell) => cell + 1
       );
 
-      const isColliding = movedPosition.some((i) =>
-        MAIN_CELLS[i].className.includes('dead')
-      );
+      const isColliding = someInRowHasClassName(movedPosition, 'dead');
 
       if (!isColliding) {
         currentShape.currentPosition = movedPosition;
@@ -203,16 +208,18 @@ function init() {
   }
 
   function moveShapeToLeft() {
-    if (!isMovingOffLeft()) {
+    const isMovingOffLeft = currentShape.currentPosition.some(
+      (cell) => cell % MAIN_WIDTH === 0
+    );
+
+    if (!isMovingOffLeft) {
       removeShapeAtPosition();
 
       const movedPosition = currentShape.currentPosition.map(
         (cell) => cell - 1
       );
 
-      const isColliding = movedPosition.some((i) =>
-        MAIN_CELLS[i].className.includes('dead')
-      );
+      const isColliding = someInRowHasClassName(movedPosition, 'dead');
 
       if (!isColliding) {
         currentShape.currentPosition = movedPosition;
@@ -221,16 +228,6 @@ function init() {
 
       addShapeAtPosition();
     }
-  }
-
-  function isMovingOffRight() {
-    return currentShape.currentPosition.some(
-      (cell) => cell % MAIN_WIDTH === MAIN_WIDTH - 1
-    );
-  }
-
-  function isMovingOffLeft() {
-    return currentShape.currentPosition.some((cell) => cell % MAIN_WIDTH === 0);
   }
 
   function softDrop() {
